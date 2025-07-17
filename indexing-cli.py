@@ -8,19 +8,21 @@ def InitParser():
     parser = argparse.ArgumentParser(prog="File Ordering CLI")
     # directory group
     dirs = parser.add_argument_group("Directory")
-    dirs.add_argument('-s','--src-dir', type=str, default=os.getcwd(), help="Source directory to read files from.")
+    dirs.add_argument('-s','--src-dir', type=str,required=True, help="Source directory to read files from.")
     # file type group
     ftypes = parser.add_argument_group("File Types")
-    ftypes.add_argument('-sft','--source-file-type', type=str, help="Source file type to select from list of files in directory.")
+    ftypes.add_argument('-sft','--source-file-type', type=str, required=True, help="Source file type to select from list of files in directory.")
     # order group
     order = parser.add_argument_group("Ordering")
-    order.add_argument('-st', '--start', type=int, help="Order the target from starting given number.")
+    order.add_argument('-st', '--start', type=int, default=0, help="Order the target from starting given number.")
     order.add_argument('-r', '--reverse-ordering', type=bool, default=False, help="Reverse ordering, takes 1 for True, 0 for False")
-    order.add_argument('-re', '--reorder', type=int, nargs="+", metavar="FROM TO")
-    order.add_argument('-f', '--format', type=str)
+    order.add_argument('-ro', '--reorder', type=int, nargs="+", metavar=["FROM","TO"])
+    order.add_argument('-f', '--format', type=str, help="If file names are in date format, then specify format with this. It uses datetime.strptime(format=format)")
     # ----------------------------------------
 
     args = parser.parse_args()
+    if not vars(args):
+        parser.print_help()
     return args
 
 # simple chunk function
@@ -33,7 +35,6 @@ def order_by_int(x, fr):
     try:
         int(name)
     except:
-        print(name)
         return datetime.strptime(name,fr)
     else:
         return int(name)
@@ -44,18 +45,14 @@ if __name__ == "__main__":
     if os.path.exists(args.src_dir):
         src_dir = args.src_dir
     else:
-        raise Exception("Source Path dont exist")
+        raise Exception(f"Source Path '{args.src_dir}' dont exist")
 
 
     # handle source file type
-    if args.source_file_type:
-        name, ext = os.path.splitext(args.source_file_type)
-        if not ext:
-            source_file_type = name
-    else:
-        source_file_type = ".png"
+    name, ext = os.path.splitext(args.source_file_type)
+    if not ext:
+        source_file_type = name
 
-    print(source_file_type)
     # order reverse from start point
     reverse = args.reverse_ordering
 
@@ -99,4 +96,4 @@ if __name__ == "__main__":
         name, ext = os.path.splitext(x)
         new_x = os.path.join(os.path.dirname(x),str(number)+ ext)
         os.rename(source_list[index], new_x) 
-        print(f'{source_list[index]} renamed to {new_x}')
+        print(f'{os.path.basename(x)} renamed to {str(number)+ext}')
