@@ -1,4 +1,4 @@
-⁸# Info
+# Info
 Order given files at start index or reorder some files specific. File names are in format of integer.
 Example: 2018.png 2019.png 2020.png ...
 
@@ -33,6 +33,11 @@ test/
 ```
 
 ### Reordering Feature
+If i want to put image 2023 to place of 2021, i type:
+```
+python3 indexing-cli.py -s test -sft .png -st 2018 -ro 6 3
+```
+Which means put file of 6th order in 3th by renaming it, without overwriting issue.
 
 # Usage
 ```
