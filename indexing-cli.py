@@ -5,7 +5,8 @@ from datetime import datetime
 
 def InitParser():
     # ------- cli specific parsing ---------
-    parser = argparse.ArgumentParser(prog="File Ordering CLI")
+    parser = argparse.ArgumentParser(prog="OrderingCLI",description="Order given files at start index or reorder some files specific. File names are in format of integer. Example: 2018.png 2019.png 2020.png ..."
+)
     # directory group
     dirs = parser.add_argument_group("Directory")
     dirs.add_argument('-s','--src-dir', type=str,required=True, help="Source directory to read files from.")
@@ -18,6 +19,8 @@ def InitParser():
     order.add_argument('-r', '--reverse-ordering', type=bool, default=False, help="Reverse ordering, takes 1 for True, 0 for False")
     order.add_argument('-ro', '--reorder', type=int, nargs="+", metavar=["FROM","TO"])
     order.add_argument('-f', '--format', type=str, help="If file names are in date format, then specify format with this. It uses datetime.strptime(format=format)")
+
+    parser.add_argument('-v', '--verbose', action="store_true", help="Verbose the renaming and total number of renamed files.")
     # ----------------------------------------
 
     args = parser.parse_args()
@@ -35,7 +38,12 @@ def order_by_int(x, fr):
     try:
         int(name)
     except:
-        return datetime.strptime(name,fr)
+        try:
+            datetime.strptime(name,fr)
+        except:
+            raise Exception("File name format doesn't match")
+        else:
+            return datetime.strptime(name, fr)
     else:
         return int(name)
 
@@ -60,7 +68,14 @@ if __name__ == "__main__":
     ordered_source_list.sort(key=lambda x: order_by_int(x, args.format))
 
     source_list = []
-
+    
+    print("""
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@░█▀█░█▀▄░█▀▄░█▀▀░█▀▄░▀█▀░█▀█░█▀▀░█▀▀░█░░░▀█▀@
+@░█░█░█▀▄░█░█░█▀▀░█▀▄░░█░░█░█░█░█░█░░░█░░░░█░@
+@░▀▀▀░▀░▀░▀▀░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    """)
     # Add "_" to name
     # ["./places/almaty/raw/1.png", "./places/almaty/raw/2.png", ...]
     for index, i in enumerate(ordered_source_list):
@@ -87,6 +102,7 @@ if __name__ == "__main__":
                 second_popped_item = source_list.pop(from_order)
                 source_list.insert(to_order, second_popped_item)
 
+    total_renamed: int = 0
     for index, x in enumerate(ordered_source_list):
         if reverse:
             number = args.start - index
@@ -95,5 +111,12 @@ if __name__ == "__main__":
 
         name, ext = os.path.splitext(x)
         new_x = os.path.join(os.path.dirname(x),str(number)+ ext)
+        total_renamed += 1
         os.rename(source_list[index], new_x) 
-        print(f'{os.path.basename(x)} renamed to {str(number)+ext}')
+        if args.verbose:
+            print(f'{os.path.basename(x)} renamed to {str(number)+ext}')
+
+    print(20*"-")
+    print("SUCCESS")
+    print(f'Total {total_renamed} files renamed.')
+
