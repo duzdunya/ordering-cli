@@ -33,7 +33,7 @@ test/
 ```
 
 ### Reordering Feature
-If i want to put image 2023 to place of 2021, i type:
+If i want to put image 2023 to place of 2020, i type:
 ```
 python3 indexing-cli.py -s test -sft .png -st 2018 -ro 6 3
 ```
