@@ -1,4 +1,4 @@
-# Info
+⁸# Info
 Order given files at start index or reorder some files specific. File names are in format of integer.
 Example: 2018.png 2019.png 2020.png ...
 
@@ -7,20 +7,33 @@ Lets say you have image files in directory named "test".
 These image files are named by numbers in order.
 ```
 test/
-  2018.png
-  2019.png
-  2021.png
-  2022.png
-  2023.png
-  2024.png
+    2018.png
+    2019.png
+    2021.png
+    2022.png
+    2023.png
+    2024.png
 ```
 
 You want to have these files being in order. But 2021 must be renamed to 2020 and in according 2022 to 2021 and so far.
 You simply type:
 ```
-python3 indexing-cli.py -s test -sft .png -st 2019
+python3 indexing-cli.py -s test -sft .png -st 2018
 ```
 Ta Da you achived the goal.
+Now files:
+```
+test/
+    2018.png
+    2019.png
+    2020.png
+    2021.png
+    2022.png
+    2023.png
+```
+
+### Reordering Feature
+
 # Usage
 ```
 python3 indexing-cli.py [parameters]
